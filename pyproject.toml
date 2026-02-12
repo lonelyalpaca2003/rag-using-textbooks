@@ -6,9 +6,12 @@ readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "chromadb>=1.5.0",
+    "doc2text>=0.2.4",
     "fastapi>=0.128.8",
     "gradio>=6.5.1",
+    "ipykernel>=7.2.0",
     "llama-index>=0.14.14",
     "pypdf>=6.7.0",
+    "python-dotenv>=1.2.1",
     "uvicorn>=0.40.0",
 ]
