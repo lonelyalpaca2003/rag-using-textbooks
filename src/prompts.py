@@ -17,3 +17,33 @@ Q1: [question]
 Q2: [question]
 Q3: [question]
 """
+
+SUMMARIZE_LECTURE = """Summarize the lecture content in given lecture notes by organizing into these sections:
+
+1. **Key Concepts**: Main ideas and definitions
+2. **Mathematical Formulas**: Important equations with explanations
+3. **Examples/Applications**: Specific examples used
+4. **Important Points for Exams**: Critical things to remember
+
+Be concise but complete. Use the specific notation from the lecture.
+"""
+
+FIND_TEXTBOOK_PAGES = """Find the page numbers from the {textbook} for content that corresponds most with the {topic}. For each topic
+provide 
+- specific page number or range of pages
+- Brief description of what's on those pages
+
+If you are unsure or can't find the topic in the book, express that it is not possible.
+Format:
+**{topic}**: Pages X-Y - [description]
+"""
+
+EXAM_PREP = """Based on the retrieved lecture content, create an exam preparation guide for {topic}.
+
+Include:
+1. **Core concepts to memorize**
+2. **Key formulas** (with variable definitions)
+3. **Common mistakes to avoid**
+4. **Likely exam question types**
+5. **Quick review checklist**
+"""
