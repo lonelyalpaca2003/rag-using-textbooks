@@ -18,7 +18,7 @@ Q2: [question]
 Q3: [question]
 """
 
-SUMMARIZE_LECTURE = """Summarize the lecture content in given lecture notes by organizing into these sections:
+SUMMARIZE_LECTURE = """Summarize the lecture content given in {lecture} notes by organizing into these sections:
 
 1. **Key Concepts**: Main ideas and definitions
 2. **Mathematical Formulas**: Important equations with explanations
@@ -28,7 +28,7 @@ SUMMARIZE_LECTURE = """Summarize the lecture content in given lecture notes by o
 Be concise but complete. Use the specific notation from the lecture.
 """
 
-FIND_TEXTBOOK_PAGES = """Find the page numbers from the {textbook} for content that corresponds most with the {topic}. For each topic
+FIND_TEXTBOOK_PAGES = """Find the page numbers from the {textbook} for content that corresponds most with {topic}. For each topic
 provide 
 - specific page number or range of pages
 - Brief description of what's on those pages
