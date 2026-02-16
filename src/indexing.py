@@ -10,7 +10,9 @@ from llama_index.core import VectorStoreIndex, StorageContext
 from llama_index.vector_stores.chroma import ChromaVectorStore
 from llama_index.postprocessor.cohere_rerank import CohereRerank
 
-def load_documents_with_metadata_included(data_path:str = '../data'):
+load_dotenv()
+
+def load_documents_with_metadata_included(data_path:str = 'data'):
     all_docs = []
     for filename in os.listdir(data_path):
         if not filename.endswith('.pdf'):
