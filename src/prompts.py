@@ -20,10 +20,9 @@ Q3: [question]
 
 SUMMARIZE_LECTURE = """Summarize the lecture content given in {lecture} notes by organizing into these sections:
 
-1. **Key Concepts**: Main ideas and definitions
-2. **Mathematical Formulas**: Important equations with explanations
-3. **Examples/Applications**: Specific examples used
-4. **Important Points for Exams**: Critical things to remember
+1. **Key Concepts**: Main ideas and definitions that are given in the lecture slides. 
+2. **Mathematical Formulas**: The most important equations with explanations. 
+3. **Important Points for Exams**: Critical things to remember either conceptually or formulas to remember.
 
 Be concise but complete. Use the specific notation from the lecture.
 """
