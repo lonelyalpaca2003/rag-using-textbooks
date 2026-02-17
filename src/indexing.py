@@ -42,19 +42,26 @@ def load_documents_with_metadata_included(data_path:str = 'data'):
 
     return all_docs 
 
-def create_or_load_vector_store(db_name : str = "ml_notes"):
-    splitter = SentenceSplitter(chunk_size = 512, chunk_overlap= 100)
-    Settings.embed_model = HuggingFaceEmbedding(model_name = 'sentence-transformers/all-MiniLM-L6-V2')
+def create_or_load_vector_store(db_name: str = "ml_notes"):
+    splitter = SentenceSplitter(chunk_size=512, chunk_overlap=100)
+    Settings.embed_model = HuggingFaceEmbedding(model_name='sentence-transformers/all-MiniLM-L6-v2')
     Settings.node_parser = splitter
-    chroma_client = chromadb.PersistentClient(path = './chroma')
+    chroma_client = chromadb.PersistentClient(path='./chroma')
+    
     try:
-        ## load directly if the database exists 
         chroma_collection = chroma_client.get_collection(db_name)   
         print(f"Loading existing database {db_name}") 
-    except:     
-        ## if the database doesn't exist make a new collection 
+        
+        if chroma_collection.count() == 0:  # <-- Changed from 'collection' to 'chroma_collection'
+            print("Collection is empty! Re-indexing...")
+            chroma_client.delete_collection(db_name)
+            chroma_collection = chroma_client.create_collection(db_name)  # <-- Changed here too
+        else:
+            print(f"Collection has {chroma_collection.count()} items")  # <-- And here
+            
+    except ValueError:     
         chroma_collection = chroma_client.create_collection(db_name) 
-        print(f"Creating new database {db_name} ")
+        print(f"Creating new database {db_name}")
 
     return chroma_collection
 
@@ -67,4 +74,4 @@ def create_query_engine(db_name : str = 'ml_notes'):
     index = VectorStoreIndex.from_documents(documents, storage_context = storage_context)
     query_engine = index.as_query_engine(response_mode = 'tree_summarize', verbose = True, similarity_top_k = 10, 
                                          node_postprocessors = [CohereRerank(top_n = 5)])
-    return query_engine
+    return query_engine, index
