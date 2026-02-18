@@ -52,12 +52,12 @@ def create_or_load_vector_store(db_name: str = "ml_notes"):
         chroma_collection = chroma_client.get_collection(db_name)   
         print(f"Loading existing database {db_name}") 
         
-        if chroma_collection.count() == 0:  # <-- Changed from 'collection' to 'chroma_collection'
+        if chroma_collection.count() == 0:  
             print("Collection is empty! Re-indexing...")
             chroma_client.delete_collection(db_name)
-            chroma_collection = chroma_client.create_collection(db_name)  # <-- Changed here too
+            chroma_collection = chroma_client.create_collection(db_name)  
         else:
-            print(f"Collection has {chroma_collection.count()} items")  # <-- And here
+            print(f"Collection has {chroma_collection.count()} items") 
             
     except ValueError:     
         chroma_collection = chroma_client.create_collection(db_name) 
