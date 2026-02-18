@@ -28,16 +28,6 @@ def summarize_lecture(lecture_num):
                                         response_mode = "tree_summarize")
     prompt = SUMMARIZE_LECTURE.format(lecture = f" ST443_Lecture_{lecture_num}")
     response = filtered_qe.query(prompt)
-
-    print(f"\nTotal chunks retrieved: {len(response.source_nodes)}")
-    print(f"Unique pages: {set(node.metadata['page_num'] for node in response.source_nodes)}")
-    
-    print("\n--- RETRIEVED SOURCES ---")
-    for i, node in enumerate(response.source_nodes, 1):
-        print(f"\n{i}. File: {node.metadata['file_name']}")
-        print(f"   Page: {node.metadata['page_num']}")
-        print(f"   Score: {node.score:.3f}")
-        print(f"   Text preview: {node.text}...")
     
     return response.response
 
