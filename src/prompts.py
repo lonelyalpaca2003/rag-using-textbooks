@@ -18,13 +18,32 @@ Q2: [question]
 Q3: [question]
 """
 
-SUMMARIZE_LECTURE = """Summarize the lecture content given in {lecture} notes by organizing into these sections:
+SUMMARIZE_LECTURE ="""Summarize the retrieved lecture content by organizing into these sections:
 
-1. **Key Concepts**: Main ideas and definitions that are given in the lecture slides. 
-2. **Mathematical Formulas**: The most important equations with explanations. 
-3. **Important Points for Exams**: Critical things to remember either conceptually or formulas to remember.
+1. **Key Concepts**: 
+   - List all main ideas and definitions from the lecture
+   - Explain each concept in 2-3 sentences
+   - Include the context and why each concept matters
 
-Be concise but complete. Use the specific notation from the lecture.
+2. **Mathematical Formulas**: 
+   - Write out ALL important equations mentioned in the lecture.
+   - Explain what each variable/symbol means
+   - Describe when and why to use each formula
+   - Use the exact notation from the lecture slides
+
+3. **Examples/Applications**:
+   - Describe any examples, case studies, or applications mentioned
+   - Explain what each example illustrates
+   - Include any datasets or scenarios used
+
+4. **Important Points for Exams**:
+   - Key formulas to memorize
+   - Critical conceptual understanding points
+   - Common pitfalls or mistakes to avoid
+   - Connections to other topics
+
+Be thorough and detailed. This is for exam preparation, so include everything important from the lecture.
+If formulas are present, write them out completely. If examples are given, describe them fully.
 """
 
 FIND_TEXTBOOK_PAGES = """Find the page numbers from the {textbook} for content that corresponds most with {topic}. For each topic
