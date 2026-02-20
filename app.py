@@ -3,6 +3,7 @@ from src.indexing import create_query_engine
 from llama_index.core.vector_stores import MetadataFilter, MetadataFilters 
 from src.prompts import QUIZ_GENERATION, SUMMARIZE_LECTURE, FIND_TEXTBOOK_PAGES, EXAM_PREP
 from dotenv import load_dotenv
+import chromadb
 
 load_dotenv()
 
