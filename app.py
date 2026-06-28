@@ -32,10 +32,56 @@ def summarize_lecture(lecture_num):
     
     return response.response
 
-def find_textbook_pages(textbook, topic):
+#def find_textbook_pages(textbook, topic):
     prompt = FIND_TEXTBOOK_PAGES.format(textbook = textbook, topic = topic)
     response = query_engine.query(prompt)
     return response.response
+
+def find_textbook_pages(textbook, topic):
+    textbook_files = {
+        "ISLR": "ISLRv2_corrected_June_2023.pdf",
+        "Elements of Statistical Learning": "elements_of_statistical_learning.pdf",
+    }
+    
+    filename = textbook_files.get(textbook)
+    if not filename:
+        return f"Textbook {textbook} not found in database"
+    
+    # Filter to only this textbook
+    filters = MetadataFilters(filters=[
+        MetadataFilter(key="file_name", value=filename),
+        MetadataFilter(key="doc_type", value="textbook")
+    ])
+    
+    # Create filtered query engine
+    filtered_qe = index.as_query_engine(
+        similarity_top_k=15, 
+        filters=filters
+    )
+    
+    # Better prompt
+    prompt = f"""Find pages in this {textbook} that discuss {topic}.
+    
+    For each relevant section, provide:
+    - Exact page number(s)
+    - What aspect of {topic} is covered
+    - Whether it's a definition, example, proof, or application
+    
+    Format:
+    **Page X**: [Brief description]
+    **Pages X-Y**: [Brief description]
+    
+    Only include pages you actually found in the retrieved context.
+    """
+    
+    response = filtered_qe.query(prompt)
+    
+    # Show sources to verify
+    sources_text = "\n\n**Retrieved pages:**\n"
+    for node in response.source_nodes:
+        sources_text += f"- Page {node.metadata['page_num']}, Score: {node.score:.2f}\n"
+    
+    return response.response + sources_text
 
 def exam_prep(topic):
     prompt = EXAM_PREP.format( topic = topic)
