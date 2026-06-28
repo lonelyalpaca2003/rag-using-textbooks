@@ -22,8 +22,7 @@ def load_documents_with_metadata_included(data_path:str = 'data'):
 
         if "lecture" in filename.lower():
             doc_type = "lecture"
-
-        if 'lecture' not in filename.lower():
+        else:
             doc_type = "textbook"
 
         for page_num, page in enumerate(reader.pages):
@@ -66,12 +65,21 @@ def create_or_load_vector_store(db_name: str = "ml_notes"):
     return chroma_collection
 
 
-def create_query_engine(db_name : str = 'ml_notes'):
-    documents = load_documents_with_metadata_included()
+def create_query_engine(db_name: str = 'ml_notes'):
     chroma_collection = create_or_load_vector_store(db_name)
-    vector_store = ChromaVectorStore(chroma_collection= chroma_collection,)
-    storage_context = StorageContext.from_defaults(vector_store = vector_store)
-    index = VectorStoreIndex.from_documents(documents, storage_context = storage_context)
-    query_engine = index.as_query_engine(response_mode = 'tree_summarize', verbose = True, similarity_top_k = 10, 
-                                         node_postprocessors = [CohereRerank(top_n = 5)])
+    vector_store = ChromaVectorStore(chroma_collection=chroma_collection)
+    storage_context = StorageContext.from_defaults(vector_store=vector_store)
+
+    if chroma_collection.count() == 0:
+        documents = load_documents_with_metadata_included()
+        index = VectorStoreIndex.from_documents(documents, storage_context=storage_context)
+    else:
+        index = VectorStoreIndex.from_vector_store(vector_store, storage_context=storage_context)
+
+    query_engine = index.as_query_engine(
+        response_mode='tree_summarize',
+        verbose=True,
+        similarity_top_k=10,
+        node_postprocessors=[CohereRerank(top_n=5)]
+    )
     return query_engine, index

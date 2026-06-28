@@ -31,12 +31,6 @@ def summarize_lecture(lecture_num):
         response_mode="tree_summarize"
     )
     response = filtered_qe.query(SUMMARIZE_LECTURE)
-    
-    return response 
-
-#def find_textbook_pages(textbook, topic):
-    prompt = FIND_TEXTBOOK_PAGES.format(textbook = textbook, topic = topic)
-    response = query_engine.query(prompt)
     return response.response
 
 def find_textbook_pages(textbook, topic):
@@ -47,42 +41,25 @@ def find_textbook_pages(textbook, topic):
     
     filename = textbook_files.get(textbook)
     if not filename:
-        return f"Textbook {textbook} not found in database"
-    
-    # Filter to only this textbook
+        return f"Textbook '{textbook}' not found in database"
+
     filters = MetadataFilters(filters=[
         MetadataFilter(key="file_name", value=filename),
         MetadataFilter(key="doc_type", value="textbook")
     ])
-    
-    # Create filtered query engine
+
     filtered_qe = index.as_query_engine(
-        similarity_top_k=15, 
+        similarity_top_k=15,
         filters=filters
     )
-    
-    # Better prompt
-    prompt = f"""Find pages in this {textbook} that discuss {topic}.
-    
-    For each relevant section, provide:
-    - Exact page number(s)
-    - What aspect of {topic} is covered
-    - Whether it's a definition, example, proof, or application
-    
-    Format:
-    **Page X**: [Brief description]
-    **Pages X-Y**: [Brief description]
-    
-    Only include pages you actually found in the retrieved context.
-    """
-    
+
+    prompt = FIND_TEXTBOOK_PAGES.format(textbook=textbook, topic=topic)
     response = filtered_qe.query(prompt)
-    
-    # Show sources to verify
+
     sources_text = "\n\n**Retrieved pages:**\n"
     for node in response.source_nodes:
         sources_text += f"- Page {node.metadata['page_num']}, Score: {node.score:.2f}\n"
-    
+
     return response.response + sources_text
 
 def exam_prep(topic):
@@ -121,9 +98,10 @@ with gr.Blocks(theme=gr.themes.Soft()) as demo:
     with gr.Tab(" Generate Quiz"):
         with gr.Row():
             with gr.Column():
-                quiz_topic = gr.Textbox(
-                    label="Topic",
-                    placeholder="regularisation"
+                quiz_lecture_num = gr.Number(
+                    label="Lecture Number",
+                    value=1,
+                    precision=0
                 )
                 num_q = gr.Slider(
                     minimum=3,
@@ -137,7 +115,7 @@ with gr.Blocks(theme=gr.themes.Soft()) as demo:
             with gr.Column():
                 quiz_output = gr.Markdown(label="Quiz Questions")
         
-        quiz_btn.click(generate_quiz, inputs=[quiz_topic, num_q], outputs=quiz_output)
+        quiz_btn.click(generate_quiz, inputs=[quiz_lecture_num, num_q], outputs=quiz_output)
     
     with gr.Tab(" Summarize Lecture"):
         with gr.Row():
@@ -168,7 +146,7 @@ with gr.Blocks(theme=gr.themes.Soft()) as demo:
             with gr.Column():
                 pages_output = gr.Markdown(label="Textbook Pages")
         
-        find_btn.click(find_textbook_pages, inputs=[topic_input, textbook_input], outputs=pages_output)
+        find_btn.click(find_textbook_pages, inputs=[textbook_input, topic_input], outputs=pages_output)
     
     with gr.Tab(" About"):
         gr.Markdown("""
