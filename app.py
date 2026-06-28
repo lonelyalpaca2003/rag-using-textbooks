@@ -19,18 +19,20 @@ def generate_quiz(lecture_num, num_questions):
     return response.response
 
 def summarize_lecture(lecture_num):
-    filters = MetadataFilters(filters = [
-        MetadataFilter(key = "file_name", 
-                       value = f"ST443_Lecture_{lecture_num}.pdf", 
-                       operator = "==")
-                       ])
-    filtered_qe = index.as_query_engine(similarity_top_k = 50, 
-                                        filters = filters, 
-                                        response_mode = "tree_summarize")
-    prompt = SUMMARIZE_LECTURE.format(lecture = f" ST443_Lecture_{lecture_num}")
-    response = filtered_qe.query(prompt)
+    filters = MetadataFilters(filters=[
+        MetadataFilter(key="file_name", 
+                       value=f"ST443_Lecture_{lecture_num}.pdf", 
+                       operator="==")
+    ])
     
-    return response.response
+    filtered_qe = index.as_query_engine(
+        similarity_top_k=20,  
+        filters=filters, 
+        response_mode="tree_summarize"
+    )
+    response = filtered_qe.query(SUMMARIZE_LECTURE)
+    
+    return response 
 
 #def find_textbook_pages(textbook, topic):
     prompt = FIND_TEXTBOOK_PAGES.format(textbook = textbook, topic = topic)
