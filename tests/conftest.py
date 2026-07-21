@@ -1,8 +1,4 @@
 from unittest.mock import MagicMock, patch
-
-# Patch before any test module can import app.py, which calls create_query_engine()
-# at module level. This must be done here (not in a fixture) so the patch is active
-# during pytest's collection phase when test files are imported.
 _mock_engine = MagicMock()
 _mock_index = MagicMock()
 _engine_patch = patch(

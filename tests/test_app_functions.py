@@ -27,20 +27,35 @@ class TestAskQuestion:
 
 class TestGenerateQuiz:
 
-    def test_lecture_number_appears_in_query(self, mock_engine):
-        mock_engine.query.return_value.response = "Q1: ..."
-        app.generate_quiz(lecture_num=5, num_questions=3)
-        prompt = mock_engine.query.call_args[0][0]
-        assert "ST443_Lecture 5" in prompt
+    def _make_mock_qe(self, mock_index, response_text="Q1: ..."):
+        mock_response = MagicMock()
+        mock_response.response = response_text
+        mock_qe = MagicMock()
+        mock_qe.query.return_value = mock_response
+        mock_index.as_query_engine.return_value = mock_qe
+        return mock_qe
 
-    def test_num_questions_appears_in_query(self, mock_engine):
-        mock_engine.query.return_value.response = "Q1: ..."
+    def test_filters_by_correct_lecture_filename(self, mock_index):
+        self._make_mock_qe(mock_index)
+        app.generate_quiz(lecture_num=5, num_questions=3)
+        filters = mock_index.as_query_engine.call_args[1]["filters"]
+        filter_values = [f.value for f in filters.filters]
+        assert "ST443_Lecture_5.pdf" in filter_values
+
+    def test_lecture_number_appears_in_query(self, mock_index):
+        mock_qe = self._make_mock_qe(mock_index)
+        app.generate_quiz(lecture_num=5, num_questions=3)
+        prompt = mock_qe.query.call_args[0][0]
+        assert "ST443_Lecture_5.pdf" in prompt
+
+    def test_num_questions_appears_in_query(self, mock_index):
+        mock_qe = self._make_mock_qe(mock_index)
         app.generate_quiz(lecture_num=2, num_questions=7)
-        prompt = mock_engine.query.call_args[0][0]
+        prompt = mock_qe.query.call_args[0][0]
         assert "7" in prompt
 
-    def test_returns_response_text(self, mock_engine):
-        mock_engine.query.return_value.response = "Quiz content"
+    def test_returns_response_text(self, mock_index):
+        self._make_mock_qe(mock_index, response_text="Quiz content")
         result = app.generate_quiz(3, 5)
         assert result == "Quiz content"
 

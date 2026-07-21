@@ -14,8 +14,18 @@ def ask_question(prompt):
     return response.response
 
 def generate_quiz(lecture_num, num_questions):
-    prompt = QUIZ_GENERATION.format(source = f" ST443_Lecture {lecture_num}", num_questions = num_questions)
-    response = query_engine.query(prompt)
+    filters = MetadataFilters(filters=[
+        MetadataFilter(key="file_name",
+                       value=f"ST443_Lecture_{lecture_num}.pdf",
+                       operator="==")
+    ])
+    filtered_qe = index.as_query_engine(
+        similarity_top_k=15,
+        filters=filters,
+        response_mode="tree_summarize"
+    )
+    prompt = QUIZ_GENERATION.format(source=f"ST443_Lecture_{lecture_num}.pdf", num_questions=num_questions)
+    response = filtered_qe.query(prompt)
     return response.response
 
 def summarize_lecture(lecture_num):

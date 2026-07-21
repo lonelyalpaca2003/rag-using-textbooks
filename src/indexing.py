@@ -6,6 +6,7 @@ from llama_index.core import Settings
 from llama_index.core.node_parser import SentenceSplitter
 from llama_index.embeddings.huggingface import HuggingFaceEmbedding
 import chromadb
+from chromadb.errors import NotFoundError
 from llama_index.core import VectorStoreIndex, StorageContext
 from llama_index.vector_stores.chroma import ChromaVectorStore
 from llama_index.postprocessor.cohere_rerank import CohereRerank
@@ -58,8 +59,8 @@ def create_or_load_vector_store(db_name: str = "ml_notes"):
         else:
             print(f"Collection has {chroma_collection.count()} items") 
             
-    except ValueError:     
-        chroma_collection = chroma_client.create_collection(db_name) 
+    except NotFoundError:
+        chroma_collection = chroma_client.create_collection(db_name)
         print(f"Creating new database {db_name}")
 
     return chroma_collection
