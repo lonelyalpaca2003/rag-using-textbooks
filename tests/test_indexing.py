@@ -1,6 +1,7 @@
 import pytest
 from unittest.mock import MagicMock
 from llama_index.core import Document
+from chromadb.errors import NotFoundError
 from src.indexing import load_documents_with_metadata_included, create_or_load_vector_store
 
 
@@ -103,7 +104,7 @@ class TestCreateOrLoadVectorStore:
         mocker.patch("src.indexing.Settings")
 
     def test_creates_new_collection_when_not_found(self):
-        self.mock_client.get_collection.side_effect = ValueError("not found")
+        self.mock_client.get_collection.side_effect = NotFoundError("new_db")
         mock_collection = MagicMock()
         self.mock_client.create_collection.return_value = mock_collection
 
@@ -137,7 +138,7 @@ class TestCreateOrLoadVectorStore:
         assert result == mock_new
 
     def test_default_db_name_is_ml_notes(self):
-        self.mock_client.get_collection.side_effect = ValueError()
+        self.mock_client.get_collection.side_effect = NotFoundError("ml_notes")
         self.mock_client.create_collection.return_value = MagicMock()
 
         create_or_load_vector_store()
